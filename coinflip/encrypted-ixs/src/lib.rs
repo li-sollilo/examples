@@ -1,3 +1,6 @@
+//! Coinflip circuit — generates a random boolean via `ArcisRNG::bool()` and compares
+//! it against the player's encrypted choice. Returns revealed win/loss boolean.
+
 use arcis::*;
 
 #[encrypted]

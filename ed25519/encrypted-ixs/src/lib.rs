@@ -1,3 +1,6 @@
+//! Ed25519 circuit — `sign_message` uses `MXESigningKey::sign()` for distributed
+//! signing. `verify_signature` uses `Pack<VerifyingKey>` for blind verification.
+
 use arcis::*;
 
 #[encrypted]

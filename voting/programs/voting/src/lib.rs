@@ -1,3 +1,9 @@
+//! Voting — encrypted tallying with authority-gated reveal.
+//!
+//! Stateful: two `Enc<Mxe, u64>` counters updated via callbacks. VoterRecord PDA
+//! prevents double-voting. Only the authority can reveal the boolean result.
+//! Circuit: `encrypted-ixs/src/lib.rs`. Walkthrough: `README.md`.
+
 use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
 use arcium_client::idl::arcium::types::CallbackAccount;
@@ -43,6 +49,7 @@ pub mod voting {
 
         let args = ArgBuilder::new().build();
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         // Initialize encrypted vote counters (yes/no) through MPC
@@ -107,6 +114,7 @@ pub mod voting {
         vote_encryption_pubkey: [u8; 32],
         vote_nonce: u128,
     ) -> Result<()> {
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
         let args = ArgBuilder::new()
             .x25519_pubkey(vote_encryption_pubkey)
             .plaintext_u128(vote_nonce)
@@ -122,6 +130,7 @@ pub mod voting {
 
         ctx.accounts.voter_record.bump = ctx.bumps.voter_record;
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -192,6 +201,7 @@ pub mod voting {
 
         msg!("Revealing voting result for poll with id {}", id);
 
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
         let args = ArgBuilder::new()
             .plaintext_u128(ctx.accounts.poll_acc.nonce)
             .account(
@@ -202,6 +212,7 @@ pub mod voting {
             )
             .build();
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(

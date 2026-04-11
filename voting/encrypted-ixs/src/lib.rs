@@ -1,3 +1,6 @@
+//! Voting circuit — three instructions: `init_vote_stats` (zero counters),
+//! `vote` (increment yes/no counter), `reveal_result` (compare and reveal boolean).
+
 use arcis::*;
 
 #[encrypted]

@@ -1,3 +1,7 @@
+//! Sealed-Bid Auction circuit — four instructions: `init_auction_state`,
+//! `place_bid` (compare + update highest/second-highest), `determine_winner_first_price`,
+//! `determine_winner_vickrey`.
+
 use arcis::*;
 
 #[encrypted]

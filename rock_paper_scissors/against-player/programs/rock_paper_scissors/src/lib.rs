@@ -1,3 +1,9 @@
+//! Rock Paper Scissors — Player vs Player with encrypted async moves.
+//!
+//! Stateful: `Enc<Mxe, GameMoves>` updated by two players in separate transactions.
+//! Three instructions: init_game, player_move, compare_moves.
+//! Circuit: `encrypted-ixs/src/lib.rs`. Walkthrough: `README.md`.
+
 use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
 use arcium_client::idl::arcium::types::CallbackAccount;

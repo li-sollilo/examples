@@ -25,16 +25,12 @@ The solution: Player 1's move is **encrypted and immutable** (can't be changed, 
 4. **Encrypted comparison**: Moves compared without anyone being able to see them
 5. **Result revelation**: Only game outcome (win/loss/tie) revealed
 
-Player 1's move is **encrypted and immutable** (stored on-chain, can't be changed) but **hidden** (Player 2 can't decrypt it). Neither player gains information advantage, regardless of submission timing.
-
 ## Variants
 
-Two implementations demonstrate different encrypted gameplay scenarios:
+- [**Player vs Player**](./against-player/) -- two encrypted submissions, async reveal. Stateful (tracks game state between moves).
+- [**Player vs House**](./against-house/) -- player vs MPC-generated random opponent. Stateless (single computation).
 
-### [Player vs Player](./against-player/)
+## Further reading
 
-Two players submit encrypted moves. Neither party can access the opponent's choice until both encrypted moves are submitted.
-
-### [Player vs House](./against-house/)
-
-Player competes against an on-chain algorithm. The system cannot access the player's move before generating its response, ensuring provable fairness.
+- [Arcis Primitives](https://docs.arcium.com/developers/arcis/primitives) -- `ArcisRNG` used in the against-house variant
+- [Input/Output Patterns](https://docs.arcium.com/developers/arcis/input-output) -- encrypted move submission and result revelation

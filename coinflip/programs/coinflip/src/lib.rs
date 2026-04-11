@@ -1,3 +1,8 @@
+//! Coinflip — distributed randomness via MPC.
+//!
+//! Stateless: one encrypted instruction, one fire-and-forget callback (emits event).
+//! Circuit: `encrypted-ixs/src/lib.rs`. Walkthrough: `README.md`.
+
 use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
 

@@ -1,3 +1,9 @@
+//! Medical Records — re-encryption via MPC.
+//!
+//! Stateless: patient data is decrypted inside MPC and re-encrypted to a recipient's
+//! key. The callback emits re-encrypted fields as an event.
+//! Circuit: `encrypted-ixs/src/lib.rs`. Walkthrough: `README.md`.
+
 use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
 

@@ -1,3 +1,10 @@
+//! Sealed-Bid Auction — encrypted comparison with first-price + Vickrey mechanisms.
+//!
+//! Stateful: `Enc<Mxe, AuctionState>` tracks highest/second-highest bids. Four
+//! instructions: init_auction_state, place_bid, determine_winner_first_price,
+//! determine_winner_vickrey.
+//! Circuit: `encrypted-ixs/src/lib.rs`. Walkthrough: `README.md`.
+
 use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
 use arcium_client::idl::arcium::types::CallbackAccount;
@@ -73,6 +80,7 @@ pub mod sealed_bid_auction {
         auction.bid_count = 0;
         auction.encrypted_state = [[0u8; 32]; 5];
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         let args = ArgBuilder::new().build();
@@ -149,8 +157,10 @@ pub mod sealed_bid_auction {
             ErrorCode::AuctionEnded
         );
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
         let args = ArgBuilder::new()
             .x25519_pubkey(bidder_pubkey)
             .plaintext_u128(nonce)
@@ -249,8 +259,10 @@ pub mod sealed_bid_auction {
         );
         require!(auction.bid_count > 0, ErrorCode::NoBids);
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
         let args = ArgBuilder::new()
             .plaintext_u128(auction.state_nonce)
             .account(
@@ -336,8 +348,10 @@ pub mod sealed_bid_auction {
         );
         require!(auction.bid_count > 0, ErrorCode::NoBids);
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
         let args = ArgBuilder::new()
             .plaintext_u128(auction.state_nonce)
             .account(

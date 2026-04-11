@@ -1,3 +1,6 @@
+//! Medical Records circuit — re-encrypts a `PatientData` struct from sender's key
+//! to receiver's key. Single instruction: `share_patient_data`.
+
 use arcis::*;
 
 #[encrypted]

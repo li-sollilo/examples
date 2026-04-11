@@ -1,3 +1,6 @@
+//! RPS Player vs Player circuit — three instructions: `init_game` (sentinel state),
+//! `player_move` (validates + updates encrypted game state), `compare_moves` (reveals winner).
+
 use arcis::*;
 
 #[encrypted]

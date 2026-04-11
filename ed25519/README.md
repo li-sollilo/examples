@@ -1,59 +1,65 @@
-# Ed25519 Signatures - Confidential Key Management
+# Ed25519 Signatures — Distributed Key Management
 
-This example demonstrates Ed25519 signing and verification using distributed key management through multi-party computation. The private key is split across multiple nodes and never exists in a single location.
+Sign and verify Ed25519 signatures where the private key is split across MPC nodes and never exists in a single location.
 
-## How It Works
+## How it works
 
-**Message Signing**: A message is sent to the Arcium network where MPC nodes collectively generate a valid Ed25519 signature using their key shares. The signature can be verified by anyone using the public key.
-
-**Signature Verification with Confidential Public Key**: The verifying key (public key) is provided in encrypted form, and the signature is verified within MPC. Only the verification result (valid/invalid) is revealed to a designated observer.
-
-## Running the Example
-
-```bash
-# Install dependencies
-yarn install
-
-# Build the program
-arcium build
-
-# Run tests
-arcium test
-```
-
-The test suite demonstrates both signing and verification flows with the MPC-managed key.
-
-## Technical Implementation
-
-### MPC Signing
-
-Arcium's `MXESigningKey` enables signing through distributed key shares:
+**Signing**: A plaintext message is sent to the MPC cluster. Each node uses its key share in a distributed signing protocol to produce a standard Ed25519 signature. The signature is revealed — it's publicly verifiable by anyone with the corresponding public key.
 
 ```rust
+#[instruction]
 pub fn sign_message(message: [u8; 5]) -> ArcisEd25519Signature {
     let signature = MXESigningKey::sign(&message);
     signature.reveal()
 }
 ```
 
-Each MPC node holds a share of the private key and executes a distributed signing protocol to produce a standard Ed25519 signature without reconstructing the complete key.
-
-> See [Arcis Primitives](https://docs.arcium.com/developers/arcis/primitives) for the full cryptographic API.
-
-### Confidential Public Key Verification
+**Verification**: An encrypted public key (`Enc<Shared, Pack<VerifyingKey>>`) and a plaintext message + signature are sent to MPC. The cluster unpacks the key, verifies the signature, and returns the boolean result encrypted to a designated observer. This hides *which* public key was checked.
 
 ```rust
+#[instruction]
 pub fn verify_signature(
     verifying_key_enc: Enc<Shared, Pack<VerifyingKey>>,
     message: [u8; 5],
     signature: [u8; 64],
     observer: Shared,
-) -> Enc<Shared, bool> {
-    let verifying_key = verifying_key_enc.to_arcis().unpack();
-    let signature = ArcisEd25519Signature::from_bytes(signature);
-    let is_valid = verifying_key.verify(&message, &signature);
-    observer.from_arcis(is_valid)
-}
+) -> Enc<Shared, bool>
 ```
 
-In some scenarios, revealing which public key is being verified could leak sensitive information (identity, organizational affiliations). This pattern enables verification without public key disclosure.
+## Concepts demonstrated
+
+- **`MXESigningKey`**: Ed25519 private key shares split across MPC nodes — the full key is never reconstructed
+- **Publicly verifiable output**: the signature is revealed and verifiable by anyone with the public key — unlike other examples where only a boolean or encrypted state is returned
+- **Blind verification**: `verify_signature` hides *which* public key was checked, returning only an encrypted boolean to a designated observer
+
+## Run
+
+```bash
+yarn install
+arcium build
+arcium test
+```
+
+## Key files
+
+- `encrypted-ixs/src/lib.rs` — the circuits: `sign_message`, `verify_signature`
+- `programs/ed_25519/src/lib.rs` — the on-chain program
+- `tests/ed_25519.ts` — end-to-end test
+
+## Pitfalls
+
+**Signatures are public on reveal** — unlike other examples where the output stays encrypted or is a boolean, here the full 64-byte signature is exposed. This is intentional (Ed25519 signatures must be publicly verifiable), but developers expecting MPC to keep the output private should understand the distinction.
+
+**Message size is fixed at 5 bytes** — the circuit signature is `message: [u8; 5]`. Larger messages require a different circuit definition.
+
+## Limitations
+
+- Only standard Ed25519 — no custom signing algorithms
+- No key rotation — the MXE signing key is fixed per deployment
+- 5-byte message cap in the example circuit
+
+See also: [Arcis Primitives](https://docs.arcium.com/developers/arcis/primitives) for `MXESigningKey` reference.
+
+---
+
+*End of the recommended path. See [Mental Model](https://docs.arcium.com/developers/arcis/mental-model) to revisit the theory behind what you just built.*

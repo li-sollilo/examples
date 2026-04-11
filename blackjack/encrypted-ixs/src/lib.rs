@@ -1,3 +1,7 @@
+//! Blackjack circuit — six instructions covering the full game lifecycle.
+//! Uses `Pack<[u8; 52]>` for deck compression and `ArcisRNG::shuffle()` for dealing.
+//! `53u8` is the sentinel for empty hand slots.
+
 use arcis::*;
 
 #[encrypted]

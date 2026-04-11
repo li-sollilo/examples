@@ -1,3 +1,9 @@
+//! Blackjack — encrypted game state with `Pack<T>` compression.
+//!
+//! Stateful: 6 instructions covering shuffle, hit, stand, double down, dealer play,
+//! resolve. `Pack<[u8; 52]>` compresses a 52-card deck from 1,664 to 64 bytes.
+//! Circuit: `encrypted-ixs/src/lib.rs`. Walkthrough: `README.md`.
+
 use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
 use arcium_client::idl::arcium::types::CallbackAccount;
@@ -8,6 +14,16 @@ const COMP_DEF_OFFSET_PLAYER_DOUBLE_DOWN: u32 = comp_def_offset("player_double_d
 const COMP_DEF_OFFSET_PLAYER_STAND: u32 = comp_def_offset("player_stand");
 const COMP_DEF_OFFSET_DEALER_PLAY: u32 = comp_def_offset("dealer_play");
 const COMP_DEF_OFFSET_RESOLVE_GAME: u32 = comp_def_offset("resolve_game");
+
+// BlackjackGame account byte offsets for ArgBuilder.account() reads.
+// Layout: discriminator(8) | deck(32*2) | player_hand(32) | dealer_hand(32) | ...
+const DISCRIMINATOR_SIZE: u32 = 8;
+const DECK_OFFSET: u32 = DISCRIMINATOR_SIZE; // 8
+const DECK_SIZE: u32 = 32 * 2; // Pack<[u8; 52]> = 2 field elements
+const PLAYER_HAND_OFFSET: u32 = DECK_OFFSET + DECK_SIZE; // 72
+const PLAYER_HAND_SIZE: u32 = 32; // Pack<[u8; 11]> = 1 field element
+const DEALER_HAND_OFFSET: u32 = PLAYER_HAND_OFFSET + PLAYER_HAND_SIZE; // 104
+const DEALER_HAND_SIZE: u32 = 32; // Pack<[u8; 11]> = 1 field element
 
 declare_id!("Ku4ygyvbN7UbezR3eNGBJMM5iGdM5dPtb23czFuenMK");
 
@@ -52,7 +68,7 @@ pub mod blackjack {
         blackjack_game.player_hand_size = 0;
         blackjack_game.dealer_hand_size = 0;
 
-        // Queue the shuffle and deal cards computation
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
         let args = ArgBuilder::new()
             .x25519_pubkey(client_pubkey)
             .plaintext_u128(client_nonce)
@@ -60,6 +76,7 @@ pub mod blackjack {
             .plaintext_u128(client_again_nonce)
             .build();
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -184,20 +201,22 @@ pub mod blackjack {
             ErrorCode::InvalidMove
         );
 
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
         let args = ArgBuilder::new()
             // Deck
             .plaintext_u128(ctx.accounts.blackjack_game.deck_nonce)
-            .account(ctx.accounts.blackjack_game.key(), 8, 32 * 2)
+            .account(ctx.accounts.blackjack_game.key(), DECK_OFFSET, DECK_SIZE)
             // Player hand
             .x25519_pubkey(ctx.accounts.blackjack_game.player_enc_pubkey)
             .plaintext_u128(ctx.accounts.blackjack_game.client_nonce)
-            .account(ctx.accounts.blackjack_game.key(), 8 + 32 * 2, 32)
+            .account(ctx.accounts.blackjack_game.key(), PLAYER_HAND_OFFSET, PLAYER_HAND_SIZE)
             // Player hand size
             .plaintext_u8(ctx.accounts.blackjack_game.player_hand_size)
             // Dealer hand size
             .plaintext_u8(ctx.accounts.blackjack_game.dealer_hand_size)
             .build();
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -291,20 +310,22 @@ pub mod blackjack {
             ErrorCode::InvalidMove
         );
 
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
         let args = ArgBuilder::new()
             // Deck
             .plaintext_u128(ctx.accounts.blackjack_game.deck_nonce)
-            .account(ctx.accounts.blackjack_game.key(), 8, 32 * 2)
+            .account(ctx.accounts.blackjack_game.key(), DECK_OFFSET, DECK_SIZE)
             // Player hand
             .x25519_pubkey(ctx.accounts.blackjack_game.player_enc_pubkey)
             .plaintext_u128(ctx.accounts.blackjack_game.client_nonce)
-            .account(ctx.accounts.blackjack_game.key(), 8 + 32 * 2, 32)
+            .account(ctx.accounts.blackjack_game.key(), PLAYER_HAND_OFFSET, PLAYER_HAND_SIZE)
             // Player hand size
             .plaintext_u8(ctx.accounts.blackjack_game.player_hand_size)
             // Dealer hand size
             .plaintext_u8(ctx.accounts.blackjack_game.dealer_hand_size)
             .build();
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -393,15 +414,17 @@ pub mod blackjack {
             ErrorCode::InvalidMove
         );
 
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
         let args = ArgBuilder::new()
             // Player hand
             .x25519_pubkey(ctx.accounts.blackjack_game.player_enc_pubkey)
             .plaintext_u128(ctx.accounts.blackjack_game.client_nonce)
-            .account(ctx.accounts.blackjack_game.key(), 8 + 32 * 2, 32)
+            .account(ctx.accounts.blackjack_game.key(), PLAYER_HAND_OFFSET, PLAYER_HAND_SIZE)
             // Player hand size
             .plaintext_u8(ctx.accounts.blackjack_game.player_hand_size)
             .build();
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -470,13 +493,14 @@ pub mod blackjack {
             ErrorCode::InvalidGameState
         );
 
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
         let args = ArgBuilder::new()
             // Deck
             .plaintext_u128(ctx.accounts.blackjack_game.deck_nonce)
-            .account(ctx.accounts.blackjack_game.key(), 8, 32 * 2)
+            .account(ctx.accounts.blackjack_game.key(), DECK_OFFSET, DECK_SIZE)
             // Dealer hand
             .plaintext_u128(ctx.accounts.blackjack_game.dealer_nonce)
-            .account(ctx.accounts.blackjack_game.key(), 8 + 32 * 2 + 32, 32)
+            .account(ctx.accounts.blackjack_game.key(), DEALER_HAND_OFFSET, DEALER_HAND_SIZE)
             // Client nonce
             .x25519_pubkey(ctx.accounts.blackjack_game.player_enc_pubkey)
             .plaintext_u128(nonce)
@@ -486,6 +510,7 @@ pub mod blackjack {
             .plaintext_u8(ctx.accounts.blackjack_game.dealer_hand_size)
             .build();
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -563,20 +588,22 @@ pub mod blackjack {
             ErrorCode::InvalidGameState
         );
 
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
         let args = ArgBuilder::new()
             // Player hand
             .x25519_pubkey(ctx.accounts.blackjack_game.player_enc_pubkey)
             .plaintext_u128(ctx.accounts.blackjack_game.client_nonce)
-            .account(ctx.accounts.blackjack_game.key(), 8 + 32 * 2, 32)
+            .account(ctx.accounts.blackjack_game.key(), PLAYER_HAND_OFFSET, PLAYER_HAND_SIZE)
             // Dealer hand
             .plaintext_u128(ctx.accounts.blackjack_game.dealer_nonce)
-            .account(ctx.accounts.blackjack_game.key(), 8 + 32 * 2 + 32, 32)
+            .account(ctx.accounts.blackjack_game.key(), DEALER_HAND_OFFSET, DEALER_HAND_SIZE)
             // Player hand size
             .plaintext_u8(ctx.accounts.blackjack_game.player_hand_size)
             // Dealer hand size
             .plaintext_u8(ctx.accounts.blackjack_game.dealer_hand_size)
             .build();
 
+        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(

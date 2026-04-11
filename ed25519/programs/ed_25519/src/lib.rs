@@ -1,3 +1,9 @@
+//! Ed25519 Signatures — distributed key management via MPC.
+//!
+//! Two instructions: `sign_message` (reveals signature) and `verify_signature`
+//! (blind verification returning encrypted boolean to observer).
+//! Circuit: `encrypted-ixs/src/lib.rs`. Walkthrough: `README.md`.
+
 use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
 
