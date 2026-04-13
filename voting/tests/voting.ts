@@ -1,3 +1,17 @@
+/**
+ * Voting test — encrypted tallying with wallet-derived encryption keys.
+ *
+ * Unique to this example: the x25519 encryption key is **derived from the Solana wallet**
+ * (sign a fixed message → SHA-256 the signature → use as private key). Voters recover
+ * their encryption key from their wallet alone, no extra material to store.
+ *
+ * Flow: init_vote_stats → derive key via `deriveEncryptionKey` → encrypt ballot → submit
+ * `vote` RPC → MPC updates encrypted counters via callback → authority calls `reveal_result`
+ * to publish only the boolean outcome. Double-vote prevention relies on `VoterRecord` PDA.
+ *
+ * See README.md for the walkthrough and ../encrypted-ixs/src/lib.rs for the circuit.
+ */
+
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";

@@ -4,6 +4,8 @@ Generate a random coin flip using MPC where no single node can predict or bias t
 
 ## How it works
 
+**Use this pattern when**: you need randomness where no single party can bias the outcome.
+
 The player encrypts their choice (heads/tails) and submits it. The MPC cluster generates a random boolean via `ArcisRNG::bool()`, compares it against the encrypted choice, and reveals only the win/loss outcome. Neither the player's choice nor the random value is ever exposed — only the comparison result.
 
 ```rust

@@ -1,3 +1,12 @@
+/**
+ * Coinflip test — end-to-end client flow for the simplest Arcium MPC example.
+ *
+ * Flow: init comp def → generate x25519 keypair → derive shared secret with MXE pubkey →
+ * encrypt user choice → submit `flip` RPC → await callback event → assert outcome.
+ *
+ * See README.md for the walkthrough and ../encrypted-ixs/src/lib.rs for the circuit.
+ */
+
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";

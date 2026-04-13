@@ -1,5 +1,5 @@
 //! RPS vs House circuit — generates a uniform random move in [0,2] via rejection
-//! sampling (16 iterations of `ArcisRNG::bool()`), compares against player's move.
+//! sampling (16 iterations, 2 bits each), then compares against the player's move.
 
 use arcis::*;
 

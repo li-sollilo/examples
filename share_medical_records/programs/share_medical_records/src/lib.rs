@@ -1,7 +1,9 @@
 //! Medical Records — re-encryption via MPC.
 //!
-//! Stateless: patient data is decrypted inside MPC and re-encrypted to a recipient's
-//! key. The callback emits re-encrypted fields as an event.
+//! Two instructions: `store_patient_data` writes encrypted data to a `PatientData` account
+//! (pure Anchor, no MPC); `share_patient_data` re-encrypts that stored data inside MPC for
+//! a recipient and emits the result as an event. The MPC computation is read-only —
+//! no encrypted state accumulates across calls.
 //! Circuit: `encrypted-ixs/src/lib.rs`. Walkthrough: `README.md`.
 
 use anchor_lang::prelude::*;

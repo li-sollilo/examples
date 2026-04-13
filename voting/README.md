@@ -4,6 +4,8 @@ Tally votes without decrypting individual ballots. Votes stay encrypted througho
 
 ## How it works
 
+**Use this pattern when**: running totals must accumulate without revealing individual contributions.
+
 A poll stores two encrypted `u64` counters (yes/no) as ciphertexts in an Anchor account, initialized via `init_vote_stats`. Each vote triggers an MPC computation that decrypts the ballot and the current tallies *inside the MPC cluster*, increments the matching counter, re-encrypts, and writes the result back via a callback. A `VoterRecord` PDA prevents double-voting — the account's existence proves a voter already voted.
 
 ```rust

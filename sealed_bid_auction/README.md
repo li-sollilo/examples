@@ -4,6 +4,8 @@ Run first-price and Vickrey (second-price) auctions where bid amounts stay encry
 
 ## How it works
 
+**Use this pattern when**: you need to determine a winner (or second-price clearing) without revealing losing bids.
+
 The authority creates an auction with a type (first-price or Vickrey), min bid, and end time. Each bid triggers an MPC computation that compares the encrypted bid against the current encrypted state — tracking both highest and second-highest bids — and writes the updated state back via callback.
 
 ```rust

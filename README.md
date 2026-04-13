@@ -29,7 +29,7 @@ The first `arcium test` is slow (pulls the trusted dealer Docker image, 3-5 min)
 | [Blackjack](./blackjack/) | Encrypted game state | Advanced | Yes | `Pack<T>` for efficient storage, 6 instructions | Complex multi-step protocols |
 | [Ed25519](./ed25519/) | Distributed signing | Advanced | No | `MXESigningKey`, threshold signatures | Distributed key management |
 
-**Recommended path**: Coinflip -> Voting -> Sealed-Bid Auction -> Blackjack
+**Recommended path**: Coinflip -> Voting -> Sealed-Bid Auction -> Blackjack -> Ed25519
 
 See also [Rock Paper Scissors](./rock_paper_scissors/) for the family overview comparing the two RPS variants.
 

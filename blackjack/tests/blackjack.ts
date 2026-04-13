@@ -1,3 +1,13 @@
+/**
+ * Blackjack test — full game lifecycle across six MPC instructions.
+ *
+ * Flow: shuffle_and_deal_cards → player_hit / player_double_down / player_stand →
+ * dealer_play → resolve_game. The encrypted `Pack<[u8; 52]>` deck and `Pack<[u8; 11]>`
+ * hands live in Anchor account state across transactions, updated by each MPC callback.
+ *
+ * See README.md for the walkthrough and ../encrypted-ixs/src/lib.rs for the circuit.
+ */
+
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { PublicKey, Keypair } from "@solana/web3.js";

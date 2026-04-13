@@ -1,3 +1,12 @@
+/**
+ * RPS vs House test — client flow for MPC-generated random opponent.
+ *
+ * Flow: init comp def → encrypt player's move → submit `play_rps` RPC → MPC draws a
+ * uniform random move via rejection sampling → await callback with revealed outcome.
+ *
+ * See README.md for the walkthrough and ../encrypted-ixs/src/lib.rs for the circuit.
+ */
+
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";

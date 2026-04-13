@@ -4,7 +4,9 @@ Transfer encrypted patient data from one party's key to another's without exposi
 
 ## How it works
 
-A patient encrypts their medical record (ID, age, gender, blood type, weight, height, allergies) under their own key and submits it. The MPC cluster decrypts the data inside the secure environment, then re-encrypts it under the recipient doctor's public key. The re-encrypted data is emitted in an event. Only the doctor can decrypt it — plaintext data is never exposed outside the MPC cluster.
+**Use this pattern when**: encrypted data must transfer between parties without either of them learning each other's keys.
+
+The patient first stores their encrypted medical record on-chain (`store_patient_data` — a pure Anchor write, no MPC). When sharing, `share_patient_data` sends the encrypted record to the MPC cluster, which decrypts it inside the secure environment, re-encrypts it under the recipient doctor's public key, and emits the re-encrypted data as an event. Only the doctor can decrypt it — plaintext data is never exposed outside the MPC cluster.
 
 ```rust
 #[instruction]

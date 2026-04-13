@@ -1,3 +1,13 @@
+/**
+ * RPS Player vs Player test — two-transaction async flow with encrypted game state.
+ *
+ * Flow: init_game (both slots set to sentinel `3`) → player A submits encrypted move →
+ * player B submits encrypted move → compare_moves reveals only the outcome. Players cannot
+ * see each other's choice because moves live in `Enc<Mxe, GameMoves>`, not `Enc<Shared, _>`.
+ *
+ * See README.md for the walkthrough and ../encrypted-ixs/src/lib.rs for the circuit.
+ */
+
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { PublicKey, Keypair } from "@solana/web3.js";

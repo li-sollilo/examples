@@ -1,3 +1,14 @@
+/**
+ * Sealed-Bid Auction test — covers both first-price and Vickrey winner-determination flows.
+ *
+ * Flow: init_auction_state → N bidders each encrypt a bid amount → submit `place_bid` RPC
+ * per bidder → MPC updates `Enc<Mxe, AuctionState>` with highest and second-highest bids →
+ * auction creator calls `determine_winner_first_price` OR `determine_winner_vickrey` →
+ * MPC reveals the winner's public key and the settlement price.
+ *
+ * See README.md for the walkthrough and ../encrypted-ixs/src/lib.rs for the circuit.
+ */
+
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";

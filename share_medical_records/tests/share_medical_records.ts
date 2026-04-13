@@ -1,3 +1,14 @@
+/**
+ * Medical Records test — re-encryption flow with sender and receiver key pairs.
+ *
+ * Flow: patient generates their x25519 keypair → encrypts `PatientData` fields →
+ * `store_patient_data` writes encrypted record on-chain (pure Anchor, no MPC) →
+ * `share_patient_data` sends it to MPC, which re-encrypts to the receiver's key →
+ * callback emits re-encrypted fields as an event. Plaintext never exists outside MPC.
+ *
+ * See README.md for the walkthrough and ../encrypted-ixs/src/lib.rs for the circuit.
+ */
+
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";

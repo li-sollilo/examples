@@ -4,6 +4,8 @@ Sign and verify Ed25519 signatures where the private key is split across MPC nod
 
 ## How it works
 
+**Use this pattern when**: you need standard signatures without any single party holding the private key.
+
 **Signing**: A plaintext message is sent to the MPC cluster. Each node uses its key share in a distributed signing protocol to produce a standard Ed25519 signature. The signature is revealed — it's publicly verifiable by anyone with the corresponding public key.
 
 ```rust

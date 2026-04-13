@@ -4,6 +4,8 @@ Play against an MPC-generated random opponent. The house cannot see your move be
 
 ## How it works
 
+**Use this pattern when**: you need randomness bounded to a small set (rejection sampling inside MPC).
+
 The player encrypts their move (rock/paper/scissors) and submits it. A single MPC computation decrypts the move, generates a random house move via `ArcisRNG` using rejection sampling (16 iterations to get a uniform value in 0-2), compares the two, and reveals only the outcome (tie/player wins/house wins). Neither the player's move nor the house's random move is ever exposed.
 
 ```rust

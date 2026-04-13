@@ -4,6 +4,8 @@ Two players submit encrypted moves asynchronously. Neither can see the other's c
 
 ## How it works
 
+**Use this pattern when**: two parties submit hidden inputs asynchronously and only the comparison is revealed.
+
 A game is initialized with both move slots set to `3` (empty sentinel — valid moves are 0-2). Player A encrypts their move and submits it — the MPC circuit writes it into the encrypted game state (`Enc<Mxe, GameMoves>`). Player B does the same later. Player B cannot see Player A's move because it's encrypted to the MXE, not to any individual.
 
 ```rust

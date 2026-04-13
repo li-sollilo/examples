@@ -4,6 +4,8 @@ Encrypted blackjack where the deck, dealer's hole card, and undealt cards remain
 
 ## How it works
 
+**Use this pattern when**: game state must persist across turns with selective reveals (player sees hand, dealer hole card stays hidden).
+
 At game start, a 52-card deck is shuffled using `ArcisRNG` inside MPC. The deck is packed into 2 field elements via `Pack<T>`, compressing 52 bytes of card data from 1,664 bytes of ciphertext to 64 bytes:
 
 ```rust

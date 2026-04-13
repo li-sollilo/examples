@@ -1,3 +1,15 @@
+/**
+ * Ed25519 test — distributed signing and blind verification flows.
+ *
+ * Two tests: (1) `sign_message` — MPC produces a standard Ed25519 signature from key shares;
+ * the signature is revealed (publicly verifiable, not secret). (2) `verify_signature` —
+ * an encrypted `Pack<VerifyingKey>` plus a plaintext message/signature are checked inside
+ * MPC; only an encrypted boolean is returned to a designated observer, hiding which key
+ * was checked.
+ *
+ * See README.md for the walkthrough and ../encrypted-ixs/src/lib.rs for the circuit.
+ */
+
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
