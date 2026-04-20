@@ -1,10 +1,10 @@
 /**
  * Ed25519 test — distributed signing and blind verification flows.
  *
- * Two tests: (1) `sign_message` — MPC produces a standard Ed25519 signature from key shares;
+ * Two tests: (1) `sign_message` — MXE produces a standard Ed25519 signature from key shares;
  * the signature is revealed (publicly verifiable, not secret). (2) `verify_signature` —
  * an encrypted `Pack<VerifyingKey>` plus a plaintext message/signature are checked inside
- * MPC; only an encrypted boolean is returned to a designated observer, hiding which key
+ * the MXE; only an encrypted boolean is returned to a designated observer, hiding which key
  * was checked.
  *
  * See README.md for the walkthrough and ../encrypted-ixs/src/lib.rs for the circuit.
@@ -72,7 +72,7 @@ describe("Ed25519", () => {
   const arciumEnv = getArciumEnv();
   const clusterAccount = getClusterAccAddress(arciumEnv.arciumClusterOffset);
 
-  it("sign and verify with MPC Ed25519", async () => {
+  it("sign and verify (Ed25519 via MXE)", async () => {
     const owner = readKpJson(`${os.homedir()}/.config/solana/id.json`);
 
     const mxePublicKey = await getMXEPublicKeyWithRetry(
@@ -94,7 +94,7 @@ describe("Ed25519", () => {
       initVSSig
     );
 
-    console.log("\nSigning message with MPC Ed25519");
+    console.log("\nSigning message via MXE (Ed25519)");
     let message = new TextEncoder().encode("hello");
 
     const signMessageEventPromise = awaitEvent("signMessageEvent");

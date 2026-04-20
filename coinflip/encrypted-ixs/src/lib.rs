@@ -15,7 +15,7 @@ mod circuits {
     /// Performs a confidential coin flip and compares it with the player's choice.
     ///
     /// This function generates a cryptographically secure random boolean value within
-    /// the MPC environment and compares it with the player's encrypted choice.
+    /// the MXE and compares it with the player's encrypted choice.
     /// The comparison result (win/lose) is revealed while keeping both the player's
     /// choice and the actual coin flip result confidential.
     ///

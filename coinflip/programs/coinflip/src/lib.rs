@@ -1,4 +1,4 @@
-//! Coinflip — distributed randomness via MPC.
+//! Coinflip — distributed randomness via the Arcium network.
 //!
 //! Stateless: one encrypted instruction, one fire-and-forget callback (emits event).
 //! Circuit: `encrypted-ixs/src/lib.rs`. Walkthrough: `README.md`.
@@ -15,7 +15,7 @@ pub mod coinflip {
     use super::*;
 
     /// Initializes the computation definition for the coin flip operation.
-    /// This sets up the MPC environment for generating secure randomness and comparing it with the player's choice.
+    /// This sets up the MXE for generating secure randomness and comparing it with the player's choice.
     pub fn init_flip_comp_def(ctx: Context<InitFlipCompDef>) -> Result<()> {
         init_comp_def(ctx.accounts, None, None)?;
         Ok(())
@@ -24,7 +24,7 @@ pub mod coinflip {
     /// Initiates a coin flip game with the player's encrypted choice.
     ///
     /// The player submits their choice (heads or tails) in encrypted form along with their
-    /// public key and nonce. The MPC computation will generate a cryptographically secure
+    /// public key and nonce. The encrypted computation generates a cryptographically secure
     /// random boolean and compare it with the player's choice to determine if they won.
     ///
     /// # Arguments
@@ -62,7 +62,7 @@ pub mod coinflip {
         Ok(())
     }
 
-    /// Handles the result of the coin flip MPC computation.
+    /// Handles the result of the coin flip computation.
     ///
     /// This callback receives the result of comparing the player's choice with the
     /// randomly generated coin flip. The result is a boolean indicating whether

@@ -6,7 +6,7 @@
  * their encryption key from their wallet alone, no extra material to store.
  *
  * Flow: init_vote_stats → derive key via `deriveEncryptionKey` → encrypt ballot → submit
- * `vote` RPC → MPC updates encrypted counters via callback → authority calls `reveal_result`
+ * `vote` RPC → MXE updates encrypted counters via callback → authority calls `reveal_result`
  * to publish only the boolean outcome. Double-vote prevention relies on `VoterRecord` PDA.
  *
  * See README.md for the walkthrough and ../encrypted-ixs/src/lib.rs for the circuit.

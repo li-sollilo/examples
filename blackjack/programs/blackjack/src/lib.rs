@@ -32,7 +32,7 @@ pub mod blackjack {
     use super::*;
 
     /// Initializes the computation definition for shuffling and dealing cards.
-    /// This sets up the MPC environment for the initial deck shuffle and card dealing operation.
+    /// This sets up the MXE for the initial deck shuffle and card dealing operation.
     pub fn init_shuffle_and_deal_cards_comp_def(
         ctx: Context<InitShuffleAndDealCardsCompDef>,
     ) -> Result<()> {
@@ -42,7 +42,7 @@ pub mod blackjack {
 
     /// Creates a new blackjack game session and initiates the deck shuffle.
     ///
-    /// This function sets up a new game account with initial state and triggers the MPC computation
+    /// This function sets up a new game account with initial state and queues the encrypted computation
     /// to shuffle a standard 52-card deck and deal the opening hands (2 cards each to player and dealer).
     /// The actual shuffling and dealing happens confidentially within the Arcium network.
     ///
@@ -68,7 +68,7 @@ pub mod blackjack {
         blackjack_game.player_hand_size = 0;
         blackjack_game.dealer_hand_size = 0;
 
-        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts inputs.
         let args = ArgBuilder::new()
             .x25519_pubkey(client_pubkey)
             .plaintext_u128(client_nonce)
@@ -76,7 +76,7 @@ pub mod blackjack {
             .plaintext_u128(client_again_nonce)
             .build();
 
-        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
+        // MXE needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -97,9 +97,9 @@ pub mod blackjack {
         Ok(())
     }
 
-    /// Handles the result of the shuffle and deal cards MPC computation.
+    /// Handles the result of the shuffle and deal cards computation.
     ///
-    /// This callback processes the shuffled deck and dealt cards from the MPC computation.
+    /// This callback processes the shuffled deck and dealt cards from the encrypted computation.
     /// It updates the game state with the new deck, initial hands, and sets the game to PlayerTurn.
     /// The player receives their encrypted hand while the dealer gets one face-up card visible to the player.
     #[arcium_callback(encrypted_ix = "shuffle_and_deal_cards")]
@@ -180,7 +180,7 @@ pub mod blackjack {
 
     /// Allows the player to request an additional card (hit).
     ///
-    /// This triggers an MPC computation that draws the next card from the shuffled deck
+    /// This queues an encrypted computation that draws the next card from the shuffled deck
     /// and adds it to the player's hand. The computation also checks if the player busts (exceeds 21)
     /// and returns this information while keeping the actual card values encrypted.
     pub fn player_hit(
@@ -201,7 +201,7 @@ pub mod blackjack {
             ErrorCode::InvalidMove
         );
 
-        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts inputs.
         let args = ArgBuilder::new()
             // Deck
             .plaintext_u128(ctx.accounts.blackjack_game.deck_nonce)
@@ -216,7 +216,7 @@ pub mod blackjack {
             .plaintext_u8(ctx.accounts.blackjack_game.dealer_hand_size)
             .build();
 
-        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
+        // MXE needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -310,7 +310,7 @@ pub mod blackjack {
             ErrorCode::InvalidMove
         );
 
-        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts inputs.
         let args = ArgBuilder::new()
             // Deck
             .plaintext_u128(ctx.accounts.blackjack_game.deck_nonce)
@@ -325,7 +325,7 @@ pub mod blackjack {
             .plaintext_u8(ctx.accounts.blackjack_game.dealer_hand_size)
             .build();
 
-        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
+        // MXE needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -414,7 +414,7 @@ pub mod blackjack {
             ErrorCode::InvalidMove
         );
 
-        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts inputs.
         let args = ArgBuilder::new()
             // Player hand
             .x25519_pubkey(ctx.accounts.blackjack_game.player_enc_pubkey)
@@ -424,7 +424,7 @@ pub mod blackjack {
             .plaintext_u8(ctx.accounts.blackjack_game.player_hand_size)
             .build();
 
-        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
+        // MXE needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -493,7 +493,7 @@ pub mod blackjack {
             ErrorCode::InvalidGameState
         );
 
-        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts inputs.
         let args = ArgBuilder::new()
             // Deck
             .plaintext_u128(ctx.accounts.blackjack_game.deck_nonce)
@@ -510,7 +510,7 @@ pub mod blackjack {
             .plaintext_u8(ctx.accounts.blackjack_game.dealer_hand_size)
             .build();
 
-        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
+        // MXE needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -588,7 +588,7 @@ pub mod blackjack {
             ErrorCode::InvalidGameState
         );
 
-        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts inputs.
         let args = ArgBuilder::new()
             // Player hand
             .x25519_pubkey(ctx.accounts.blackjack_game.player_enc_pubkey)
@@ -603,7 +603,7 @@ pub mod blackjack {
             .plaintext_u8(ctx.accounts.blackjack_game.dealer_hand_size)
             .build();
 
-        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
+        // MXE needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -1359,7 +1359,7 @@ pub struct InitResolveGameCompDef<'info> {
 /// This account stores all the game state including encrypted hands, deck information,
 /// and game progress. The deck is stored as two 32-byte encrypted chunks (Pack<[u8; 52]>)
 /// that together represent all 52 cards in shuffled order. Hands are stored encrypted and only
-/// decryptable by their respective owners (player) or the MPC network (dealer).
+/// decryptable by the player (own cards) or the MXE (dealer state).
 #[account]
 #[derive(InitSpace)]
 pub struct BlackjackGame {
@@ -1367,7 +1367,7 @@ pub struct BlackjackGame {
     pub deck: [[u8; 32]; 2],
     /// Player's encrypted hand (only player can decrypt)
     pub player_hand: [u8; 32],
-    /// Dealer's encrypted hand (handled by MPC)
+    /// Dealer's encrypted hand (encrypted to the MXE)
     pub dealer_hand: [u8; 32],
     /// Cryptographic nonce for deck encryption
     pub deck_nonce: u128,
@@ -1379,7 +1379,7 @@ pub struct BlackjackGame {
     pub game_id: u64,
     /// Solana public key of the player
     pub player_pubkey: Pubkey,
-    /// Player's encryption public key for MPC operations
+    /// Player's encryption public key for the MXE
     pub player_enc_pubkey: [u8; 32],
     /// PDA bump seed
     pub bump: u8,

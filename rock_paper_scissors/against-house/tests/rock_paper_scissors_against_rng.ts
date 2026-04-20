@@ -1,7 +1,7 @@
 /**
- * RPS vs House test — client flow for MPC-generated random opponent.
+ * RPS vs House test — client flow for MXE-generated random opponent.
  *
- * Flow: init comp def → encrypt player's move → submit `play_rps` RPC → MPC draws a
+ * Flow: init comp def → encrypt player's move → submit `play_rps` RPC → MXE draws a
  * uniform random move via rejection sampling → await callback with revealed outcome.
  *
  * See README.md for the walkthrough and ../encrypted-ixs/src/lib.rs for the circuit.
@@ -87,7 +87,7 @@ describe("RockPaperScissorsAgainstRng", () => {
     const sharedSecret = x25519.getSharedSecret(privateKey, mxePublicKey);
     const cipher = new RescueCipher(sharedSecret);
 
-    const playerMove = BigInt(2); // 1 = rock, 2 = paper, 3 = scissors
+    const playerMove = BigInt(2); // 0 = rock, 1 = paper, 2 = scissors
     const plaintext = [playerMove];
 
     const nonce = randomBytes(16);

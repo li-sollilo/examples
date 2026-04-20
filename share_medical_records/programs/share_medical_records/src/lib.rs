@@ -1,8 +1,8 @@
-//! Medical Records — re-encryption via MPC.
+//! Medical Records — re-encryption.
 //!
 //! Two instructions: `store_patient_data` writes encrypted data to a `PatientData` account
-//! (pure Anchor, no MPC); `share_patient_data` re-encrypts that stored data inside MPC for
-//! a recipient and emits the result as an event. The MPC computation is read-only —
+//! (pure Anchor write, no encrypted computation); `share_patient_data` re-encrypts that stored data inside the MXE for
+//! a recipient and emits the result as an event. The encrypted computation is read-only —
 //! no encrypted state accumulates across calls.
 //! Circuit: `encrypted-ixs/src/lib.rs`. Walkthrough: `README.md`.
 
@@ -62,7 +62,7 @@ pub mod share_medical_records {
 
     /// Initiates confidential sharing of patient data with a specified receiver.
     ///
-    /// This function triggers an MPC computation that re-encrypts the patient's medical data
+    /// This function queues an encrypted computation that re-encrypts the patient's medical data
     /// for a specific receiver. The receiver will be able to decrypt the data using their
     /// private key, while the data remains encrypted for everyone else. The original
     /// stored data is not modified and remains encrypted for the original owner.
@@ -109,7 +109,7 @@ pub mod share_medical_records {
         Ok(())
     }
 
-    /// Handles the result of the patient data sharing MPC computation.
+    /// Handles the result of the patient data sharing computation.
     ///
     /// This callback processes the re-encrypted patient data that has been prepared for
     /// the specified receiver. It emits an event containing all the medical data fields

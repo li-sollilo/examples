@@ -1,4 +1,4 @@
-//! Rock Paper Scissors vs House — MPC-generated random opponent.
+//! Rock Paper Scissors vs House — MXE-generated random opponent.
 //!
 //! Stateless: one encrypted instruction with rejection sampling, one event callback.
 //! Circuit: `encrypted-ixs/src/lib.rs`. Walkthrough: `README.md`.

@@ -25,7 +25,7 @@ pub mod voting {
 
     /// Creates a new confidential poll with the given question.
     ///
-    /// This initializes a poll account and sets up the encrypted vote counters using MPC.
+    /// This initializes a poll account and sets up the encrypted vote counters inside the MXE.
     /// The vote tallies are stored in encrypted form and can only be revealed by the poll authority.
     /// All individual votes remain completely confidential throughout the voting process.
     ///
@@ -49,10 +49,10 @@ pub mod voting {
 
         let args = ArgBuilder::new().build();
 
-        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
+        // MXE needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
-        // Initialize encrypted vote counters (yes/no) through MPC
+        // Initialize encrypted vote counters (yes/no) inside the MXE
         queue_computation(
             ctx.accounts,
             computation_offset,
@@ -99,7 +99,7 @@ pub mod voting {
     /// Submits an encrypted vote to the poll.
     ///
     /// This function allows a voter to cast their vote (yes/no) in encrypted form.
-    /// The vote is added to the running tally through MPC computation, ensuring
+    /// The vote is added to the running tally via an encrypted computation, ensuring
     /// that individual votes remain confidential while updating the overall count.
     ///
     /// # Arguments
@@ -114,7 +114,7 @@ pub mod voting {
         vote_encryption_pubkey: [u8; 32],
         vote_nonce: u128,
     ) -> Result<()> {
-        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts inputs.
         let args = ArgBuilder::new()
             .x25519_pubkey(vote_encryption_pubkey)
             .plaintext_u128(vote_nonce)
@@ -130,7 +130,7 @@ pub mod voting {
 
         ctx.accounts.voter_record.bump = ctx.bumps.voter_record;
 
-        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
+        // MXE needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(
@@ -184,7 +184,7 @@ pub mod voting {
     /// Reveals the final result of the poll.
     ///
     /// Only the poll authority can call this function to decrypt and reveal the vote tallies.
-    /// The MPC computation compares the yes and no vote counts and returns whether
+    /// The encrypted computation compares the yes and no vote counts and returns whether
     /// the majority voted yes (true) or no (false).
     ///
     /// # Arguments
@@ -201,7 +201,7 @@ pub mod voting {
 
         msg!("Revealing voting result for poll with id {}", id);
 
-        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts MPC inputs.
+        // Argument order MUST match the encrypted instruction signature; reordering silently corrupts inputs.
         let args = ArgBuilder::new()
             .plaintext_u128(ctx.accounts.poll_acc.nonce)
             .account(
@@ -212,7 +212,7 @@ pub mod voting {
             )
             .build();
 
-        // MPC needs to derive this PDA at runtime; bump must be persisted before queue_computation()
+        // MXE needs to derive this PDA at runtime; bump must be persisted before queue_computation()
         ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
 
         queue_computation(

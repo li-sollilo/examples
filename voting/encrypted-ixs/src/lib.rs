@@ -21,7 +21,7 @@ mod circuits {
     /// Initializes encrypted vote counters for a new poll.
     ///
     /// Creates a VoteStats structure with zero counts for both yes and no votes.
-    /// The counters remain encrypted and can only be updated through MPC operations.
+    /// The counters remain encrypted and can only be updated inside the MXE.
     #[instruction]
     pub fn init_vote_stats() -> Enc<Mxe, VoteStats> {
         let vote_stats = VoteStats { yes: 0, no: 0 };

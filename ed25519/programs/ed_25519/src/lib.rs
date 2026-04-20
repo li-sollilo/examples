@@ -1,4 +1,4 @@
-//! Ed25519 Signatures — distributed key management via MPC.
+//! Ed25519 Signatures — distributed key management via the Arcium network.
 //!
 //! Two instructions: `sign_message` (reveals signature) and `verify_signature`
 //! (blind verification returning encrypted boolean to observer).
@@ -17,7 +17,7 @@ pub mod ed_25519 {
     use super::*;
 
     /// Initializes the computation definition for Ed25519 message signing.
-    /// This sets up the MPC environment for performing distributed key signing operations.
+    /// This sets up the MXE for performing distributed key signing operations.
     pub fn init_sign_message_comp_def(ctx: Context<InitSignMessageCompDef>) -> Result<()> {
         init_comp_def(ctx.accounts, None, None)?;
         Ok(())
@@ -25,7 +25,7 @@ pub mod ed_25519 {
 
     /// Signs a message using the MXE's distributed Ed25519 private key.
     ///
-    /// The message is signed within the MPC environment using the Arcium network's
+    /// The message is signed inside the MXE using the Arcium network's
     /// collective signing key. The private key never exists in a single location,
     /// yet a valid Ed25519 signature is produced through multi-party computation.
     ///
@@ -59,10 +59,10 @@ pub mod ed_25519 {
         Ok(())
     }
 
-    /// Handles the result of the MPC signing computation.
+    /// Handles the result of the signing computation.
     ///
     /// This callback receives the Ed25519 signature components (r and s) from the
-    /// completed MPC computation and emits them as a standard 64-byte signature.
+    /// completed computation and emits them as a standard 64-byte signature.
     #[arcium_callback(encrypted_ix = "sign_message")]
     pub fn sign_message_callback(
         ctx: Context<SignMessageCallback>,
@@ -92,7 +92,7 @@ pub mod ed_25519 {
     }
 
     /// Initializes the computation definition for Ed25519 signature verification.
-    /// This sets up the MPC environment for verifying signatures against encrypted public keys.
+    /// This sets up the MXE for verifying signatures against encrypted public keys.
     pub fn init_verify_signature_comp_def(ctx: Context<InitVerifySignatureCompDef>) -> Result<()> {
         init_comp_def(ctx.accounts, None, None)?;
         Ok(())
@@ -101,7 +101,7 @@ pub mod ed_25519 {
     /// Verifies an Ed25519 signature against an encrypted verifying key.
     ///
     /// This function allows signature verification where the public key remains encrypted
-    /// throughout the verification process. The verification happens within the MPC environment,
+    /// throughout the verification process. The verification happens inside the MXE,
     /// and only the boolean result (valid/invalid) is revealed.
     ///
     /// # Arguments
@@ -154,7 +154,7 @@ pub mod ed_25519 {
         Ok(())
     }
 
-    /// Handles the result of the MPC signature verification computation.
+    /// Handles the result of the signature verification computation.
     ///
     /// This callback receives the encrypted verification result and emits it for the observer
     /// to decrypt. The verification outcome remains encrypted until the observer decrypts it.
@@ -286,7 +286,7 @@ pub struct InitSignMessageCompDef<'info> {
     pub system_program: Program<'info, System>,
 }
 
-/// Event emitted when a message is signed using MPC Ed25519.
+/// Event emitted when a message is signed via the MXE (Ed25519).
 #[event]
 pub struct SignMessageEvent {
     /// The 64-byte Ed25519 signature (r || s components)

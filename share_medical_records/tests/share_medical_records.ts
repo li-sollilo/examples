@@ -2,9 +2,10 @@
  * Medical Records test — re-encryption flow with sender and receiver key pairs.
  *
  * Flow: patient generates their x25519 keypair → encrypts `PatientData` fields →
- * `store_patient_data` writes encrypted record on-chain (pure Anchor, no MPC) →
- * `share_patient_data` sends it to MPC, which re-encrypts to the receiver's key →
- * callback emits re-encrypted fields as an event. Plaintext never exists outside MPC.
+ * `store_patient_data` writes encrypted record on-chain (pure Anchor write, no encrypted computation) →
+ * `share_patient_data` sends it to the MXE, which re-encrypts to the receiver's key →
+ * callback emits re-encrypted fields as an event. Plaintext is never written on-chain;
+ * re-encryption happens inside the MXE.
  *
  * See README.md for the walkthrough and ../encrypted-ixs/src/lib.rs for the circuit.
  */
