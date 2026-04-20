@@ -6,7 +6,7 @@ Run first-price and Vickrey (second-price) auctions where bid amounts stay encry
 
 **Use this pattern when**: you need to determine a winner (or second-price clearing) without revealing losing bids.
 
-The authority creates an auction with a type (first-price or Vickrey), min bid, and end time. Each bid triggers an MPC computation that compares the encrypted bid against the current encrypted state — tracking both highest and second-highest bids — and writes the updated state back via callback.
+The authority creates an auction with a type (first-price or Vickrey), min bid, and end time. Each bid triggers an encrypted computation that compares the encrypted bid against the current encrypted state — tracking both highest and second-highest bids — and writes the updated state back via callback.
 
 ```rust
 #[instruction]
@@ -16,11 +16,11 @@ pub fn place_bid(
 ) -> Enc<Mxe, AuctionState>
 ```
 
-The bid is encrypted to the bidder (`Shared`), the auction state is encrypted to the MXE. The comparison `bid.amount > state.highest_bid` happens entirely inside MPC. After the auction closes, a separate instruction (`determine_winner_first_price` or `determine_winner_vickrey`) reveals only the winner's pubkey and payment amount. In Vickrey mode the winner pays the second-highest bid, so there's no incentive to bid below your true valuation.
+The bid is encrypted to the bidder (`Shared`), the auction state is encrypted to the MXE. The comparison `bid.amount > state.highest_bid` happens entirely inside the MXE. After the auction closes, a separate instruction (`determine_winner_first_price` or `determine_winner_vickrey`) reveals only the winner's pubkey and payment amount. In Vickrey mode the winner pays the second-highest bid, so there's no incentive to bid below your true valuation.
 
 ## Concepts demonstrated
 
-- **Encrypted state comparison**: comparing encrypted values against encrypted running state inside MPC
+- **Encrypted state comparison**: comparing encrypted values against encrypted running state inside the MXE
 - **`SerializedSolanaPublicKey`**: handling 32-byte Solana pubkeys via lo/hi `u128` splitting inside Arcis
 - **Two winner-determination mechanisms**: first-price (pay own bid) vs Vickrey (pay second-highest) sharing the same encrypted state
 

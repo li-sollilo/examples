@@ -1,12 +1,12 @@
 # Rock Paper Scissors — Player vs Player
 
-Two players submit encrypted moves asynchronously. Neither can see the other's choice until both are submitted and the MPC cluster compares them.
+Two players submit encrypted moves asynchronously. Neither can see the other's choice until both are submitted and the MXE compares them.
 
 ## How it works
 
 **Use this pattern when**: two parties submit hidden inputs asynchronously and only the comparison is revealed.
 
-A game is initialized with both move slots set to `3` (empty sentinel — valid moves are 0-2). Player A encrypts their move and submits it — the MPC circuit writes it into the encrypted game state (`Enc<Mxe, GameMoves>`). Player B does the same later. Player B cannot see Player A's move because it's encrypted to the MXE, not to any individual.
+A game is initialized with both move slots set to `3` (empty sentinel — valid moves are 0-2). Player A encrypts their move and submits it — the encrypted instruction writes it into the encrypted game state (`Enc<Mxe, GameMoves>`). Player B does the same later. Player B cannot see Player A's move because it's encrypted to the MXE, not to any individual.
 
 ```rust
 #[instruction]
@@ -16,13 +16,13 @@ pub fn player_move(
 ) -> Enc<Mxe, GameMoves>
 ```
 
-The circuit validates that the player hasn't already moved and that the move is valid (0-2) before updating the encrypted state. Once both slots are filled, `compare_moves` decrypts both inside MPC, determines the winner via standard RPS rules, and reveals only the outcome (tie / A wins / B wins). Individual moves are never exposed.
+The circuit validates that the player hasn't already moved and that the move is valid (0-2) before updating the encrypted state. Once both slots are filled, `compare_moves` decrypts both inside the MXE, determines the winner via standard RPS rules, and reveals only the outcome (tie / A wins / B wins). Individual moves are never exposed.
 
 ## Concepts demonstrated
 
 - **Encrypted state with async updates**: game state updated by two different players in separate transactions
-- **Sentinel values**: `3u8` represents an empty move slot, checked inside the MPC circuit as a guard
-- **Guard logic inside MPC**: the circuit validates move legality before accepting a submission
+- **Sentinel values**: `3u8` represents an empty move slot, checked inside the encrypted instruction as a guard
+- **Guard logic inside the MXE**: the circuit validates move legality before accepting a submission
 
 ## Run
 
@@ -40,7 +40,7 @@ arcium test
 
 ## Pitfalls
 
-**`NotAuthorized` on move submission** — only the registered player for that slot can submit. Check that the signer matches the player from game creation.
+**`NotAuthorized` on move submission** — only registered players (player A or B from game creation) can submit. The on-chain check verifies the signer is one of the two players; slot assignment (which player fills which slot) is enforced inside the encrypted instruction.
 
 **`compare_moves` returns `3`** — both players must have submitted before comparison. Return value `3` means the game is incomplete.
 
@@ -49,4 +49,6 @@ arcium test
 - Only 2 players per game — no multiplayer tables
 - No timeout mechanism — if Player B never submits, the game stays open indefinitely
 
-See also: [Computation Lifecycle](https://docs.arcium.com/developers/computation-lifecycle) for the async queue → MPC → callback pattern.
+See also: [Computation Lifecycle](https://docs.arcium.com/developers/computation-lifecycle) for the async queue → compute → callback pattern.
+
+**Back to [Examples](../../README.md)** | **Back to core path**: [Voting](../../voting/)

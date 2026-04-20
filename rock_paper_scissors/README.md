@@ -28,7 +28,7 @@ The solution: Player 1's move is **encrypted and immutable** (can't be changed, 
 ## Variants
 
 - [**Player vs Player**](./against-player/) -- two encrypted submissions, async reveal. Stateful (tracks game state between moves).
-- [**Player vs House**](./against-house/) -- player vs MPC-generated random opponent. Stateless (single computation).
+- [**Player vs House**](./against-house/) -- player vs MXE-generated house move. Stateless (single computation).
 
 ## Further reading
 
