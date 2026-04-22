@@ -94,6 +94,7 @@ These apply to all examples:
 - [Computation Lifecycle](https://docs.arcium.com/developers/computation-lifecycle) -- queue -> compute -> callback flow
 - [Arcis Framework](https://docs.arcium.com/developers/arcis) -- encrypted instruction reference
 - [Best Practices](https://docs.arcium.com/developers/arcis/best-practices) -- performance and design guidance
+- [Agent Skills](https://github.com/arcium-hq/agent-skills) -- optional AI assistant context pack for Arcium development
 
 For questions and support, join the [Discord community](https://discord.com/invite/arcium).
 

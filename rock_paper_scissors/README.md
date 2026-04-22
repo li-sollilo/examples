@@ -1,29 +1,12 @@
-# Rock Paper Scissors - Encrypted Moves
+# Rock Paper Scissors — Encrypted Moves
 
-Rock Paper Scissors only works if neither player can see the other's move before submitting their own. Online, moves are submitted asynchronously - Player 1 submits first, Player 2 submits hours or days later. How do you prevent Player 2 from seeing Player 1's encrypted move before making their choice?
+Fair asynchronous gameplay where moves stay hidden until resolution, even though submissions land on a public blockchain.
 
-This example demonstrates how encrypted moves enable fair asynchronous gameplay where neither player can see the other's choice, even when both moves are stored on a public blockchain.
+## How it works
 
-## Why can't you hide encrypted moves on a public blockchain?
+**Use this family when**: two parties submit small hidden inputs asynchronously and only the comparison result should be revealed.
 
-Physical Rock Paper Scissors works because moves are revealed simultaneously. Digital games are asynchronous: Player 1 submits their encrypted move on-chain, then Player 2 submits hours or days later. The challenge is preventing Player 2 from learning Player 1's move before submitting their own.
-
-Traditional approaches fail:
-
-- **Unencrypted storage**: Player 2 sees Player 1's move immediately
-- **Simple hashing (commit-reveal)**: With only 3 moves, Player 2 can brute-force all possible hashes
-- **Trusted servers**: Requires trusting a third party not to leak moves
-- **Time windows**: Don't solve the information hiding problem
-
-The solution: Player 1's move is **encrypted and immutable** (can't be changed, but hidden from Player 2), even when stored on a public blockchain.
-
-## How Encrypted Asynchronous Gameplay Works
-
-1. **Player 1 submits encrypted move**: Encrypted move submitted and stored on-chain
-2. **Asynchronous delay**: Player 2 can submit hours or days later
-3. **Player 2 submits encrypted move**: Submits encrypted move without seeing Player 1's choice
-4. **Encrypted comparison**: Moves compared without anyone being able to see them
-5. **Result revelation**: Only game outcome (win/loss/tie) revealed
+Both variants use encrypted move submission so the first player cannot be front-run by the second. The player-vs-player variant stores encrypted game state between transactions; the player-vs-house variant resolves in one computation using MXE-generated randomness.
 
 ## Variants
 
@@ -34,3 +17,5 @@ The solution: Player 1's move is **encrypted and immutable** (can't be changed, 
 
 - [Arcis Primitives](https://docs.arcium.com/developers/arcis/primitives) -- `ArcisRNG` used in the against-house variant
 - [Input/Output Patterns](https://docs.arcium.com/developers/arcis/input-output) -- encrypted move submission and result revelation
+
+**Back to [Examples](../README.md)**

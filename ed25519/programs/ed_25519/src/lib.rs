@@ -27,7 +27,7 @@ pub mod ed_25519 {
     ///
     /// The message is signed inside the MXE using the Arcium network's
     /// collective signing key. The private key never exists in a single location,
-    /// yet a valid Ed25519 signature is produced through multi-party computation.
+    /// yet a valid Ed25519 signature is still produced by the Arcium network.
     ///
     /// # Arguments
     /// * `message` - The 5-byte message to be signed
