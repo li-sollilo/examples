@@ -209,7 +209,11 @@ pub mod blackjack {
             // Player hand
             .x25519_pubkey(ctx.accounts.blackjack_game.player_enc_pubkey)
             .plaintext_u128(ctx.accounts.blackjack_game.client_nonce)
-            .account(ctx.accounts.blackjack_game.key(), PLAYER_HAND_OFFSET, PLAYER_HAND_SIZE)
+            .account(
+                ctx.accounts.blackjack_game.key(),
+                PLAYER_HAND_OFFSET,
+                PLAYER_HAND_SIZE,
+            )
             // Player hand size
             .plaintext_u8(ctx.accounts.blackjack_game.player_hand_size)
             // Dealer hand size
@@ -318,7 +322,11 @@ pub mod blackjack {
             // Player hand
             .x25519_pubkey(ctx.accounts.blackjack_game.player_enc_pubkey)
             .plaintext_u128(ctx.accounts.blackjack_game.client_nonce)
-            .account(ctx.accounts.blackjack_game.key(), PLAYER_HAND_OFFSET, PLAYER_HAND_SIZE)
+            .account(
+                ctx.accounts.blackjack_game.key(),
+                PLAYER_HAND_OFFSET,
+                PLAYER_HAND_SIZE,
+            )
             // Player hand size
             .plaintext_u8(ctx.accounts.blackjack_game.player_hand_size)
             // Dealer hand size
@@ -419,7 +427,11 @@ pub mod blackjack {
             // Player hand
             .x25519_pubkey(ctx.accounts.blackjack_game.player_enc_pubkey)
             .plaintext_u128(ctx.accounts.blackjack_game.client_nonce)
-            .account(ctx.accounts.blackjack_game.key(), PLAYER_HAND_OFFSET, PLAYER_HAND_SIZE)
+            .account(
+                ctx.accounts.blackjack_game.key(),
+                PLAYER_HAND_OFFSET,
+                PLAYER_HAND_SIZE,
+            )
             // Player hand size
             .plaintext_u8(ctx.accounts.blackjack_game.player_hand_size)
             .build();
@@ -500,7 +512,11 @@ pub mod blackjack {
             .account(ctx.accounts.blackjack_game.key(), DECK_OFFSET, DECK_SIZE)
             // Dealer hand
             .plaintext_u128(ctx.accounts.blackjack_game.dealer_nonce)
-            .account(ctx.accounts.blackjack_game.key(), DEALER_HAND_OFFSET, DEALER_HAND_SIZE)
+            .account(
+                ctx.accounts.blackjack_game.key(),
+                DEALER_HAND_OFFSET,
+                DEALER_HAND_SIZE,
+            )
             // Client nonce
             .x25519_pubkey(ctx.accounts.blackjack_game.player_enc_pubkey)
             .plaintext_u128(nonce)
@@ -593,10 +609,18 @@ pub mod blackjack {
             // Player hand
             .x25519_pubkey(ctx.accounts.blackjack_game.player_enc_pubkey)
             .plaintext_u128(ctx.accounts.blackjack_game.client_nonce)
-            .account(ctx.accounts.blackjack_game.key(), PLAYER_HAND_OFFSET, PLAYER_HAND_SIZE)
+            .account(
+                ctx.accounts.blackjack_game.key(),
+                PLAYER_HAND_OFFSET,
+                PLAYER_HAND_SIZE,
+            )
             // Dealer hand
             .plaintext_u128(ctx.accounts.blackjack_game.dealer_nonce)
-            .account(ctx.accounts.blackjack_game.key(), DEALER_HAND_OFFSET, DEALER_HAND_SIZE)
+            .account(
+                ctx.accounts.blackjack_game.key(),
+                DEALER_HAND_OFFSET,
+                DEALER_HAND_SIZE,
+            )
             // Player hand size
             .plaintext_u8(ctx.accounts.blackjack_game.player_hand_size)
             // Dealer hand size
